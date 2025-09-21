@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GDMC</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 50px;
+    }
+
+    .gdmc-container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        width: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    h1 {
+        margin-bottom: 10px;
+        font-size: 24px;
+        text-align: center;
+    }
+
+    details {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px 0;
+        background-color: #fafafa;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    details[open] {
+        background-color: #f0f0f0;
+    }
+
+    summary {
+        font-weight: 600;
+        font-size: 16px;
+        outline: none;
+        padding: 8px 15px;
+        cursor: pointer;
+    }
+
+    .device-list, .backend-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0; /* buttons stick together */
+    }
+
+    /* Flat, dull buttons inside details */
+    .device-btn, .backend-btn {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 0; /* no border radius */
+        background-color: #ffffff; /* dull white */
+        color: #333;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        text-align: left;
+    }
+
+    .device-btn:hover, .backend-btn:hover {
+        background-color: #f0f0f0; /* subtle hover */
+    }
+
+    .device-btn.selected, .backend-btn.selected {
+        background-color: #10b981; /* same green as Apply */
+        color: #fff;
+        font-weight: bold;
+    }
+
+    button.apply-btn {
+        padding: 10px 15px;
+        border-radius: 6px;
+        border: none;
+        font-size: 14px;
+        cursor: pointer;
+        background-color: #10b981;
+        color: white;
+        transition: all 0.2s ease;
+    }
+
+    button.apply-btn:hover {
+        background-color: #059669;
+    }
+
+
+
+    button.stop-btn {
+        padding: 10px 15px;
+        border-radius: 6px;
+        border: none;
+        font-size: 14px;
+        cursor: pointer;
+        background-color: orangered;
+        color: white;
+        transition: all 0.2s ease;
+    }
+
+    button.stop-btn:hover {
+        background-color: red;
+    }
+
+    input{
+        padding: 10px 15px;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #333;
+        border: 2px solid rgba(0,0,0,0.1);
+        outline: none;
+        transition: 0.5s;
+    }
+
+    input:hover {
+        border-color: #10b981;
+    }
+    input:focus {
+        border-color: #10b981;
+    }
+</style>
+</head>
+<body>
+
+<div class="gdmc-container">
+    <h1>GDMC Mouse Selector</h1>
+
+    <!-- Mouse Device Selection -->
+    <details id="deviceSelector">
+        <summary>Select Mouse Device</summary>
+        <div class="device-list" id="deviceList">
+            <!-- Buttons added dynamically -->
+        </div>
+    </details>
+
+    <!-- Backend Selection -->
+    <details id="backendSelector">
+        <summary>Select Backend</summary>
+        <div class="backend-list" id="backendList">
+            <!-- Buttons added dynamically -->
+        </div>
+    </details>
+
+    <input id="ins" type="number" placeholder="Instances" value="2">
+
+    <!-- Apply Button -->
+    <button class="apply-btn" id="dbtn" onclick="applySettings()">Apply</button>
+</div>
+
+<script>
+    let event = "";     // Selected mouse device
+    let backend = "";   // Selected backend
+
+    let dbtn = document.getElementById('dbtn');
+    let instance = document.getElementById('ins');
+
+    // Function to add a mouse device
+    function addDevice(eventName, deviceName) {
+        const deviceList = document.getElementById('deviceList');
+        const btn = document.createElement('button');
+        btn.className = 'device-btn';
+        btn.textContent = `${eventName} - ${deviceName}`;
+        btn.onclick = () => {
+            event = eventName;
+            document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            console.log("Selected device:", event);
+        };
+        deviceList.appendChild(btn);
+    }
+
+    // Function to add a backend
+    function addBackend(backendName) {
+        const backendList = document.getElementById('backendList');
+        const btn = document.createElement('button');
+        btn.className = 'backend-btn';
+        btn.textContent = backendName;
+        btn.onclick = () => {
+            backend = backendName;
+            document.querySelectorAll('.backend-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            console.log("Selected backend:", backend);
+        };
+        backendList.appendChild(btn);
+    }
+
+    // Example devices
+    // addDevice("/dev/input/event0", "Logitech USB Optical Mouse");
+    // addDevice("/dev/input/event1", "Razer Gaming Mouse");
+    // addDevice("/dev/input/event2", "Generic PS/2 Mouse");
+
+    // Example backends
+    addBackend("DCI-D");
+    addBackend("PvPGod Mouse");
+
+    // Apply button logic
+    function applySettings() {
+        if (!event || !backend) {
+            alert("Please select both a device and a backend!");
+            return;
+        }
+        console.log("Applying settings...");
+        console.log("Device:", event);
+        console.log("Backend:", backend);
+        // alert(`Applied:\nDevice: ${event}\nBackend: ${backend}`);
+        if (backend == "DCI-D"){
+            window.nativeBridge.invoke ('apply', 'dci:'+event);
+        }if (backend == "PvPGod Mouse"){
+            window.nativeBridge.invoke ('apply', 'pvpgodmouse:'+event);
+        }
+
+        dbtn.setAttribute("onclick", "stopSettings()");
+        dbtn.classList.remove("apply-btn");
+        dbtn.classList.add("stop-btn");
+        dbtn.innerHTML = 'Stop';
+        // Call backend logic here
+    }
+
+
+    function stopSettings(){
+        window.nativeBridge.invoke('stop', '');
+        dbtn.setAttribute("onclick", "applySettings()");
+        dbtn.classList.add("apply-btn");
+        dbtn.classList.remove("stop-btn");
+        dbtn.innerHTML = 'Apply';
+    }
+
+    instance.addEventListener('change', ()=>{
+        window.nativeBridge.invoke('instance', instance.value);
+    })
+</script>
+
+</body>
+</html>

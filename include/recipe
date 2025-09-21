@@ -1,0 +1,12 @@
+# Just build all the dependencies
+@show_logs true
+
+global:
+    bin = "lib"
+    compiler_parguments = "-c"
+
+# include/casci/src/casciv2.cc: out = "casciv2.o"
+# include/HTMLUI/HTMLUI.cc out = "htmlui.o"
+# include/linuxtools/linuxtools.cc out = "linuxtools.o"
+include/ulib/ulib.cc: out = "ulib.o"
+# include/ out = "" # For more files

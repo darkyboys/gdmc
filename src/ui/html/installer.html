@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XP Download Simulator</title>
+<style>
+  body {
+    font-family: Tahoma, sans-serif;
+    background: #008080;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .xp-window {
+    width: 300px;
+    background: #c0c0c0;
+    border: 2px solid #000080;
+    box-shadow: 4px 4px 0 #000;
+    border-radius: 2px;
+  }
+
+  .xp-titlebar {
+    background: #000080;
+    color: white;
+    padding: 4px 8px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .xp-titlebar button {
+    border: none;
+    width: 16px;
+    height: 16px;
+  }
+
+  .xp-content {
+    padding: 16px;
+    background: #e0e0e0;
+  }
+
+  .xp-file-name {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  .xp-progress-container {
+    width: 100%;
+    height: 16px;
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .xp-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #0000ff;
+    transition: width 0.2s;
+  }
+
+  .xp-buttons {
+    margin-top: 12px;
+    text-align: right;
+  }
+
+  .xp-buttons button {
+    background: #c0c0c0;
+    border: 1px solid #000;
+    padding: 2px 6px;
+    cursor: pointer;
+  }
+
+  /* Disabled buttons styling */
+  .xp-buttons button:disabled,
+  .xp-titlebar button:disabled {
+    background: #a0a0a0;
+    cursor: not-allowed;
+  }
+</style>
+</head>
+<body>
+
+<script>
+class XPDownload {
+  constructor(fileName) {
+    // Create main window
+    this.window = document.createElement('div');
+    this.window.className = 'xp-window';
+
+    // Titlebar
+    this.titlebar = document.createElement('div');
+    this.titlebar.className = 'xp-titlebar';
+    this.titleText = document.createElement('span');
+    this.titleText.textContent = `Downloading ${fileName}`;
+    this.titlebar.appendChild(this.titleText);
+    
+    // Grayed-out close button
+    const closeBtn = document.createElement('button');
+    closeBtn.disabled = true;
+    this.titlebar.appendChild(closeBtn);
+
+    this.window.appendChild(this.titlebar);
+
+    // Content
+    const content = document.createElement('div');
+    content.className = 'xp-content';
+
+    // File name
+    const fileLabel = document.createElement('div');
+    fileLabel.className = 'xp-file-name';
+    fileLabel.textContent = fileName;
+    content.appendChild(fileLabel);
+
+    // Progress bar
+    const progressContainer = document.createElement('div');
+    progressContainer.className = 'xp-progress-container';
+    this.progressBar = document.createElement('div');
+    this.progressBar.className = 'xp-progress-bar';
+    progressContainer.appendChild(this.progressBar);
+    content.appendChild(progressContainer);
+
+    // Buttons
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'xp-buttons';
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.disabled = true; // disabled
+    btnContainer.appendChild(cancelBtn);
+    content.appendChild(btnContainer);
+
+    this.window.appendChild(content);
+    document.body.appendChild(this.window);
+
+    this.progress = 0;
+  }
+
+  setProgress(value) {
+    this.progress = Math.min(Math.max(value, 0), 100);
+    this.progressBar.style.width = this.progress + '%';
+  }
+
+  startSimulation(interval = 100) {
+    this.simInterval = setInterval(() => {
+      if (this.progress >= 100) {
+        clearInterval(this.simInterval);
+        this.progressBar.style.background = 'green';
+      } else {
+        this.setProgress(this.progress + Math.random() * 5);
+      }
+    }, interval);
+  }
+
+  stopSimulation() {
+    clearInterval(this.simInterval);
+  }
+
+  setWindowTitle(title) {
+    this.titleText.textContent = title;
+  }
+}
+
+// Example usage:
+// const download1 = new XPDownload("MyFile.zip");
+// download1.startSimulation();
+
+// // Change title after 3 seconds
+// setTimeout(() => {
+//   download1.setWindowTitle("Installing MyFile.zip");
+// }, 3000);
+</script>
+
+</body>
+</html>

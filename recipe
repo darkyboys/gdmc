@@ -1,0 +1,22 @@
+# Building the entire project
+@system cook -d src/ui
+@system cook -d include
+
+@show_logs true
+
+src/gdmc.cc:
+    out = "gdmc"
+    include = [
+        "include",
+        "src"
+    ]
+    combine = [
+        "lib/ulib.o"
+    ]
+    pkg_in = [
+        "gtk+-3.0",
+        "webkit2gtk-4.0"
+    ]
+    compiler_parguments = "" # Just reset it
+
+@callback sudo -E bin/gdmc # For devs only!

@@ -1,0 +1,7 @@
+# This file will build the UI
+@show_logs true
+src/ui/native/ui.cc:
+    out = "ui"
+    include = "include"
+
+@callback bin/ui

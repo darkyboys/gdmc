@@ -1,0 +1,2 @@
+cook.allow.logging
+mv bin/gdmc /usr/local/bin
