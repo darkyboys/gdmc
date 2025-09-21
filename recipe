@@ -19,4 +19,4 @@ src/gdmc.cc:
     ]
     compiler_parguments = "" # Just reset it
 
-@callback sudo -E bin/gdmc # For devs only!
+# @callback sudo -E bin/gdmc # For devs only!
